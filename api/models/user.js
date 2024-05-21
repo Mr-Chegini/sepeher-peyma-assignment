@@ -1,26 +1,21 @@
 import mongoose from "mongoose";
-import  * as bcrypt from "bcrypt";
+import * as bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, "Please enter a full name"],
+    required: true,
   },
   password: {
     type: String,
-    required: [true, "Please enter a password"],
-    minlength: [8, "Password must be at least 8 characters long"],
+    required: true,
   },
   email: {
     type: String,
     lowercase: true,
     unique: true,
     index: true,
-    required: [true, "Please enter an email"],
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      "Please enter a valid email address",
-    ],
+    required: true,
   },
   createdAt: {
     type: Date,

@@ -4,11 +4,8 @@
   "description": "Pre-Interview Assignment",
   "main": "server.js",
   "type": "module",
-  "directories": {
-    "test": "tests"
-  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "node index.js",
     "dev": "node --watch index.js"
   },
@@ -21,5 +18,9 @@
     "express-validator": "^7.1.0",
     "mongoose": "^8.4.0",
     "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.24.5",
+    "jest": "^29.7.0"
   }
 }

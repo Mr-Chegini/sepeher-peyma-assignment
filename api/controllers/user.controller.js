@@ -1,8 +1,9 @@
 import User from "../models/user.js";
 
 import limitUserFields from "../helpers/limitUserFields.js";
+import CustomError from "../errors/customError.js";
 
-const create = async (req, res) => {
+const create = async (req, res, next) => {
   try {
     const user = await new User({
       email: req.body.email,
@@ -12,14 +13,17 @@ const create = async (req, res) => {
     await user.save();
     res.status(201).json({ message: "added!" });
   } catch (err) {
-    console.log(err);
+    let error;
     if (err.code == "11000") {
-      res.send("Email is in use!");
+      error = new CustomError("Email is in use!", 400);
+    } else {
+      error = new CustomError("Internal server error!", 500);
     }
+    return next(error);
   }
 };
 
-const find = async (req, res) => {
+const find = async (req, res, next) => {
   try {
     const { email, name } = req.query;
     const page = parseInt(req.query.page) || 1;
@@ -55,54 +59,60 @@ const find = async (req, res) => {
       currentPage: page,
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Internal server error" });
+    const error = new CustomError("Internal server error!", 500);
+    return next(error);
   }
 };
 
-const get = async (req, res) => {
+const get = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      const error = new CustomError("User not found!", 404);
+      return next(error);
     }
     res.status(200).json({
       user: limitUserFields(user),
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server Error" });
+    const error = new CustomError("Internal server error!", 500);
+    return next(error);
   }
 };
 
-const update = async (req, res) => {
+const update = async (req, res, next) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
     if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
+      const error = new CustomError("User not found!", 404);
+      return next(error);
     }
     res.status(200).json({ user: limitUserFields(updatedUser) });
   } catch (err) {
-    console.log(err);
+    let error;
     if (err.code == "11000") {
-      res.send("Email is in use!");
+      error = new CustomError("Email is in use!", 400);
+    } else {
+      error = new CustomError("Internal server error!", 500);
     }
+    return next(error);
   }
 };
 
-const deletedUser = async (req, res) => {
+const deletedUser = async (req, res, next) => {
   try {
     const deletedUser = await User.findByIdAndDelete(req.params.id);
     if (!deletedUser) {
-      return res.status(404).json({ message: "User not found" });
+      const error = new CustomError("User not found!", 404);
+      return next(error);
     }
     res.status(200).json({ message: "User deleted successfully" });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server Error" });
+    const error = new CustomError("Internal server error!", 500);
+    return next(error);
   }
 };
 

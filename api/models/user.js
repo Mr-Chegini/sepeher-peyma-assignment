@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    trim: true,
   },
   password: {
     type: String,
@@ -16,6 +17,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     index: true,
     required: true,
+    trim: true,
   },
   createdAt: {
     type: Date,

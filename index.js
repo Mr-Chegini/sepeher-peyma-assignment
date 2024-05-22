@@ -11,7 +11,7 @@ import mongooseConnection from "./api/config/db.config.js";
 import apiErrorHandler from "./api/middlewares/apiErrorHandler.js";
 import rateLimiter from "./api/middlewares/rateLimiter.js";
 
-const PORT = 5000;
+const PORT = process.env.port || 3000;
 const corsOptions = { origin: "http://localhost:4000" };
 
 const app = express();

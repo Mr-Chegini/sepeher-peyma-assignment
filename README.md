@@ -40,7 +40,7 @@
 
 ## Usage Instructions
 
-You can interact with the APIs using tools like Postman or Swagger. The Postman collection containing the API requests is provided in the project root folder. Alternatively, you can use Swagger [http://localhost:5000/api-docs](http://localhost:5000/api-docs) to explore the APIs.
+You can interact with the APIs using tools like Postman or Swagger. The Postman collection containing the API requests is provided in the project root folder. Alternatively, you can use Swagger [http://localhost:3000/api-docs](http://localhost:3000/api-docs) to explore the APIs.
 
 ## API Documentation
 

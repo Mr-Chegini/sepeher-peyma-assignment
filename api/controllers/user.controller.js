@@ -105,4 +105,5 @@ const deletedUser = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 export { create, find, get, update, deletedUser };

@@ -8,7 +8,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: "http://localhost:5000",
+      url: "http://localhost:3000",
     },
   ],
 };
@@ -16,7 +16,7 @@ const swaggerDefinition = {
 const options = {
   swaggerDefinition,
   failOnErrors: true,
-  apis: ["./api/routes/user.route.js", "./index.route.js"],
+  apis: ["./index.route.js", "./api/routes/user.route.js"],
 };
 
 const openapiSpecification = swaggerJsdoc(options);

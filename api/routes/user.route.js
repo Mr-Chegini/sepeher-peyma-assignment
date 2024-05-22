@@ -1,7 +1,7 @@
 import express from "express";
 
 import validateRequest from "../middlewares/validateRequest.js";
-import * as userController from "../controllers/userController.js";
+import * as userController from "../controllers/user.controller.js";
 import { createUserValidator } from "../validators/createUserValidator.js";
 
 const router = express.Router();
@@ -11,7 +11,8 @@ const router = express.Router();
  * /api/users:
  *   post:
  *     summary: Create a new user
- *     description: Create a new user with the provided email, password, and name.
+ *     tags:
+ *       - users
  *     requestBody:
  *       required: true
  *       content:
@@ -19,19 +20,19 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *                 description: The email address of the user.
- *               password:
- *                 type: string
- *                 description: The password of the user.
  *               name:
  *                 type: string
- *                 description: The name of the user.
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *             required:
+ *               - name
+ *               - email
+ *               - password
  *     responses:
- *       '200':
- *         description: User created successfully.
+ *       201:
+ *         description: User created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -39,45 +40,62 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   description: A message indicating that the user was added successfully.
- *       '400':
- *         description: Bad request. Invalid input data.
- *       '409':
- *         description: Conflict. User with the same email already exists.
+ *       400:
+ *         description: Bad request, email already in use
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
  */
 router
   .route("")
   .post(createUserValidator, validateRequest, userController.create);
+
 /**
  * @swagger
  * /api/users:
  *   get:
- *     summary: Retrieve all users
- *     description: Retrieve a list of all users with pagination and sorting.
+ *     summary: Retrieve users with optional filtering and pagination
+ *     tags:
+ *       - users
  *     parameters:
+ *       - in: query
+ *         name: email
+ *         schema:
+ *           type: string
+ *         description: Filter users by email (partial match)
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: Filter users by name (partial match)
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
- *         description: The page number for pagination (default is 1).
+ *           minimum: 1
+ *         description: The page number for pagination
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
- *         description: The maximum number of users to return per page (default is 10).
+ *           minimum: 1
+ *           maximum: 100
+ *         description: The maximum number of users per page
  *       - in: query
  *         name: sortField
  *         schema:
  *           type: string
- *         description: The field to sort users by (default is createdAt).
+ *         description: The field to sort by (default is createdAt)
  *       - in: query
  *         name: sortOrder
  *         schema:
- *           type: integer
- *         description: The sort order (1 for ascending, -1 for descending, default is 1).
+ *           type: string
+ *           enum: [asc, desc]
+ *         description: The sort order (asc or desc, default is asc)
  *     responses:
- *       '200':
- *         description: A list of users.
+ *       200:
+ *         description: A list of users and pagination details
  *         content:
  *           application/json:
  *             schema:
@@ -86,105 +104,157 @@ router
  *                 users:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/User'
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       email:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                       example: "2024-05-22T01:26:29.655Z"
+ *                   example:
+ *                     - _id: "664d49c578ba0577cea2fcad"
+ *                       name: "Babi"
+ *                       email: "bbbtasda@gmail.com"
+ *                       createdAt: "2024-05-22T01:26:29.655Z"
+ *                     - _id: "664d49d47680a74d4003abf0"
+ *                       name: "Babi"
+ *                       email: "bbbtasdsda@gmail.com"
+ *                       createdAt: "2024-05-22T01:26:44.855Z"
  *                 totalPages:
  *                   type: integer
- *                   description: The total number of pages.
  *                 currentPage:
  *                   type: integer
- *                   description: The current page number.
- *       '500':
- *         description: Internal server error.
  */
 router.route("").get(userController.find);
+
 /**
  * @swagger
  * /api/users/{id}:
  *   get:
  *     summary: Retrieve a specific user by ID
- *     description: Retrieve the user with the specified ID.
+ *     tags:
+ *       - users
  *     parameters:
  *       - in: path
  *         name: id
- *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the user to retrieve.
+ *         required: true
+ *         description: The ID of the user to retrieve
  *     responses:
- *       '200':
- *         description: The user with the specified ID.
+ *       200:
+ *         description: The user object
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
- *       '404':
- *         description: User not found.
- *       '500':
- *         description: Server Error.
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     createdAt:
+ *                       type: string
+ *                       example: "2024-05-21T16:48:49.020Z"
+ *                   example:
+ *                     _id: "664cd071fe3674f3d1c51956"
+ *                     name: "Amir"
+ *                     email: "test"
+ *                     createdAt: "2024-05-21T16:48:49.020Z"
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
  */
-
 router.route("/:id").get(userController.get);
+
 /**
  * @swagger
  * /api/users/{id}:
  *   put:
  *     summary: Update a specific user by ID
- *     description: Update the user with the specified ID.
+ *     tags:
+ *       - users
  *     parameters:
  *       - in: path
  *         name: id
- *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the user to update.
+ *         required: true
+ *         description: The ID of the user to update
  *       - in: body
  *         name: user
+ *         description: The user object to update
  *         required: true
- *         description: The updated user object.
  *         schema:
  *           type: object
  *           properties:
- *             email:
- *               type: string
- *               format: email
- *               description: The email address of the user.
- *             password:
- *               type: string
- *               description: The password of the user.
  *             name:
  *               type: string
- *               description: The name of the user.
+ *             email:
+ *               type: string
+ *             password:
+ *               type: string
  *     responses:
- *       '200':
- *         description: The updated user object.
+ *       200:
+ *         description: The updated user object
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
- *       '404':
- *         description: User not found.
- *       '500':
- *         description: Server Error.
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     createdAt:
+ *                       type: string
+ *                       example: "2024-05-21T16:48:49.020Z"
+ *                   example:
+ *                     _id: "664cd071fe3674f3d1c51956"
+ *                     name: "Amir"
+ *                     email: "test"
+ *                     createdAt: "2024-05-21T16:48:49.020Z"
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
  */
 router
   .route("/:id")
   .put(createUserValidator, validateRequest, userController.update);
+
 /**
  * @swagger
  * /api/users/{id}:
  *   delete:
  *     summary: Delete a specific user by ID
- *     description: Delete the user with the specified ID.
+ *     tags:
+ *       - users
  *     parameters:
  *       - in: path
  *         name: id
- *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the user to delete.
+ *         required: true
+ *         description: The ID of the user to delete
  *     responses:
- *       '200':
- *         description: User deleted successfully.
+ *       200:
+ *         description: User deleted successfully
  *         content:
  *           application/json:
  *             schema:
@@ -192,11 +262,11 @@ router
  *               properties:
  *                 message:
  *                   type: string
- *                   description: A message indicating that the user was deleted successfully.
- *       '404':
- *         description: User not found.
- *       '500':
- *         description: Server Error.
+ *                   example: User deleted successfully
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
  */
 router.route("/:id").delete(userController.deletedUser);
 

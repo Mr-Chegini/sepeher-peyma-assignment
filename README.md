@@ -65,6 +65,13 @@ To run tests, execute the following command:
 npm run test
 ```
 
+## Please note:
+
+- I dockerized the project, but I couldn't test it thoroughly. It may not work as expected, in which case you should run the application manually.
+- Unit tests for the controller are provided, but I encountered some errors that I didn't have time to fix. I may address these issues later.
+- Authentication and authorization mechanisms have not been implemented, so all routes are open and accessible to the public.
+- CORS middleware, Helmet, and rate limiter have been used to enhance the security of the application.
+
 ## Contact Information
 
 - Email: amirchegini007@gmail.com

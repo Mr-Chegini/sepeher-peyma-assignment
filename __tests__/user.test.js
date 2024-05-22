@@ -1,9 +1,9 @@
-import * as userController from "../api/controllers/userController.js";
+import * as userController from "../api/controllers/user.controller.js";
 import User from "../api/models/user.js";
 
 describe("User Controller", () => {
   // Mocking User model methods
-  jest.mock(User, () => ({
+  jest.mock("../api/models/user.js", () => ({
     findById: jest.fn(),
     find: jest.fn(),
     countDocuments: jest.fn(),
@@ -30,7 +30,7 @@ describe("User Controller", () => {
       await userController.create(req, res);
 
       expect(User.prototype.save).toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({ message: "added!" });
     });
 
@@ -45,11 +45,11 @@ describe("User Controller", () => {
       const res = { status: jest.fn().mockReturnThis(), send: jest.fn() };
 
       // Mocking save method of User model to throw an error with code 11000
-      User.prototype.save = jest.fn().mockRejectedValueOnce({ code: "11000" });
+      User.prototype.save = jest.fn().mockRejectedValueOnce({ code: 11000 });
 
       await userController.create(req, res);
 
-      expect(res.send).toHaveBeenCalledWith("User Already Exists!");
+      expect(res.send).toHaveBeenCalledWith("Email is in use!");
     });
   });
 

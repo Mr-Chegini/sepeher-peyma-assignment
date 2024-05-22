@@ -6,7 +6,7 @@ import swaggerUi from "swagger-ui-express";
 
 import router from "./index.route.js";
 import openapiSpecification from "./swagger.js";
-import CustomError from "./api/errors/CustomError.js";
+import CustomError from "./api/errors/customError.js"
 import mongooseConnection from "./api/config/db.config.js";
 import rateLimiter from "./api/middlewares/rateLimiter.js";
 import globalErrorHandler from "./api/middlewares/globalErrorHandler.js";

@@ -4,10 +4,7 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost/sepehr-peyma";
 
 export default function mongooseConnection() {
   mongoose
-  .connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(MONGO_URI)
   .then(() => {
     console.log("Connected to MongoDB");
   })

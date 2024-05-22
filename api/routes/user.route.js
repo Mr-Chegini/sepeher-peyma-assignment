@@ -1,8 +1,9 @@
 import express from "express";
 
+import validateRequest from "../middlewares/validateRequest.js";
 import * as userController from "../controllers/userController.js";
 import { createUserValidator } from "../validators/createUserValidator.js";
-import validateRequest from "../middlewares/validateRequest.js";
+
 const router = express.Router();
 
 /**
@@ -94,7 +95,7 @@ router
  *                   description: The current page number.
  *       '500':
  *         description: Internal server error.
- */  
+ */
 router.route("").get(userController.find);
 /**
  * @swagger
@@ -165,7 +166,9 @@ router.route("/:id").get(userController.get);
  *       '500':
  *         description: Server Error.
  */
-router.route("/:id").put(userController.update);
+router
+  .route("/:id")
+  .put(createUserValidator, validateRequest, userController.update);
 /**
  * @swagger
  * /api/users/{id}:

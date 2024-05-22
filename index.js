@@ -1,9 +1,10 @@
 import cors from "cors";
 import morgan from "morgan";
+import helmet from "helmet";
 import express from "express";
-import router from "./index.route.js";
 import swaggerUi from "swagger-ui-express";
 
+import router from "./index.route.js";
 import ApiError from "./api/errors/ApiError.js";
 import openapiSpecification from "./swagger.js";
 import mongooseConnection from "./api/config/db.config.js";
@@ -18,6 +19,7 @@ app.use(rateLimiter);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 app.use(express.json());
 app.use(cors(corsOptions));
+app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
